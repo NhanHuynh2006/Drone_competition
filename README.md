@@ -27,6 +27,9 @@ make -j4
 # Test HSV detection (no AI needed)
 ./drone_competition --test-hsv
 
+# Test HSV detection with a recorded video file
+./drone_competition --test-hsv --video /path/to/test.mp4
+
 # Test camera
 ./drone_competition --test-camera
 

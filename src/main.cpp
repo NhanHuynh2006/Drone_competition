@@ -4,6 +4,7 @@
 #include <cstring>
 #include <cmath>
 #include <csignal>
+#include <string>
 #include <unistd.h>
 #include <time.h>
 #include <opencv2/core.hpp>
@@ -70,6 +71,7 @@ int main(int argc, char **argv) {
 
     /* Parse args */
     bool test_cam=false, test_uwb=false, test_hsv=false, sim=false;
+    std::string video_path;
     for(int i=1;i<argc;i++){
         if(strcmp(argv[i],"--test-camera")==0) test_cam=true;
         else if(strcmp(argv[i],"--test-uwb")==0) test_uwb=true;
@@ -79,18 +81,29 @@ int main(int argc, char **argv) {
         else if(strcmp(argv[i],"--ai")==0) cfg.use_ai=true;
         else if(strcmp(argv[i],"--fusion")==0) cfg.use_fusion=true;
         else if(strcmp(argv[i],"--no-fusion")==0) cfg.use_fusion=false;
+        else if(strcmp(argv[i],"--video")==0 && i+1<argc) video_path=argv[++i];
     }
     printf("[MAIN] Detection: %s\n", cfg.use_ai ? "AI (NCNN YOLO)" : "HSV Color");
 
     /* === Camera === */
-    cv::VideoCapture cap(cfg.cam_idx, cv::CAP_V4L2);
-    cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M','J','P','G'));
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, cfg.cam_w);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, cfg.cam_h);
-    cap.set(cv::CAP_PROP_FPS, cfg.cam_fps);
-    cap.set(cv::CAP_PROP_BUFFERSIZE, 1);
-    if(!cap.isOpened()){printf("[CAM]Failed open %d\n",cfg.cam_idx);return 1;}
-    printf("[CAM]Opened %dx%d@%d\n",cfg.cam_w,cfg.cam_h,cfg.cam_fps);
+    cv::VideoCapture cap;
+    if (!video_path.empty()) {
+        cap.open(video_path);
+        if(!cap.isOpened()){
+            printf("[CAM] Failed open video: %s\n", video_path.c_str());
+            return 1;
+        }
+        printf("[CAM] Opened video: %s\n", video_path.c_str());
+    } else {
+        cap.open(cfg.cam_idx, cv::CAP_V4L2);
+        cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M','J','P','G'));
+        cap.set(cv::CAP_PROP_FRAME_WIDTH, cfg.cam_w);
+        cap.set(cv::CAP_PROP_FRAME_HEIGHT, cfg.cam_h);
+        cap.set(cv::CAP_PROP_FPS, cfg.cam_fps);
+        cap.set(cv::CAP_PROP_BUFFERSIZE, 1);
+        if(!cap.isOpened()){printf("[CAM]Failed open %d\n",cfg.cam_idx);return 1;}
+        printf("[CAM]Opened %dx%d@%d\n",cfg.cam_w,cfg.cam_h,cfg.cam_fps);
+    }
 
     /* === Test modes === */
     if(test_cam){
