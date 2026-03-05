@@ -1,0 +1,44 @@
+# Drone Competition Config (same as Python version)
+camera:
+  index: 0
+  width: 640
+  height: 480
+  fps: 30
+
+detection:
+  mode: "hsv"  # "ai" or "hsv"
+  model_param: "models/yolov8n.ncnn.param"
+  model_bin: "models/yolov8n.ncnn.bin"
+  input_size: 320
+  confidence: 0.45
+  iou: 0.45
+  threads: 4
+
+uwb:
+  port: "/dev/ttyACM0"
+  process_noise: 0.01
+  measurement_noise: 0.05
+  poll_rate: 30
+
+flight:
+  ip: "127.0.0.1"
+  port: 14550
+  takeoff_alt: 1.5
+
+ball_dropper:
+  pwm_chip: 2
+  pwm_channel: 0
+  close_us: 1000
+  open_us: 2000
+
+pid:
+  visual_x: {kp: 0.5, ki: 0.05, kd: 0.15}
+  visual_y: {kp: 0.5, ki: 0.05, kd: 0.15}
+  altitude:  {kp: 0.5, ki: 0.05, kd: 0.15}
+
+mission:
+  waypoints:
+    - {x: 2000, y: 1000, z: 1500, action: fly_through_hoop, color: red}
+    - {x: 4000, y: 2000, z: 1500, action: fly_through_hoop, color: yellow}
+    - {x: 3000, y: 3000, z: 1500, action: drop_ball}
+    - {x: 1000, y: 1000, z: 500,  action: precision_land}
