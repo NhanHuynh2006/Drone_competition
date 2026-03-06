@@ -1,0 +1,3 @@
+/home/nolan/Documents/drone_c/build/CMakeFiles/drone_competition.dir
+/home/nolan/Documents/drone_c/build/CMakeFiles/edit_cache.dir
+/home/nolan/Documents/drone_c/build/CMakeFiles/rebuild_cache.dir

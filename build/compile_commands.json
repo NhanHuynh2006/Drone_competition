@@ -1,0 +1,57 @@
+[
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/pid.c.o -c /home/nolan/Documents/drone_c/src/pid.c",
+  "file": "/home/nolan/Documents/drone_c/src/pid.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/kalman2d.c.o -c /home/nolan/Documents/drone_c/src/kalman2d.c",
+  "file": "/home/nolan/Documents/drone_c/src/kalman2d.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/dwm1001.c.o -c /home/nolan/Documents/drone_c/src/dwm1001.c",
+  "file": "/home/nolan/Documents/drone_c/src/dwm1001.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/ball_dropper.c.o -c /home/nolan/Documents/drone_c/src/ball_dropper.c",
+  "file": "/home/nolan/Documents/drone_c/src/ball_dropper.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/visual_servo.c.o -c /home/nolan/Documents/drone_c/src/visual_servo.c",
+  "file": "/home/nolan/Documents/drone_c/src/visual_servo.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/mission.c.o -c /home/nolan/Documents/drone_c/src/mission.c",
+  "file": "/home/nolan/Documents/drone_c/src/mission.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/gcc  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -std=gnu11 -o CMakeFiles/drone_competition.dir/src/flight_controller.c.o -c /home/nolan/Documents/drone_c/src/flight_controller.c",
+  "file": "/home/nolan/Documents/drone_c/src/flight_controller.c"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/g++  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -fopenmp -o CMakeFiles/drone_competition.dir/src/detector.cpp.o -c /home/nolan/Documents/drone_c/src/detector.cpp",
+  "file": "/home/nolan/Documents/drone_c/src/detector.cpp"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/g++  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -fopenmp -o CMakeFiles/drone_competition.dir/src/hsv_detector.cpp.o -c /home/nolan/Documents/drone_c/src/hsv_detector.cpp",
+  "file": "/home/nolan/Documents/drone_c/src/hsv_detector.cpp"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/g++  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -fopenmp -o CMakeFiles/drone_competition.dir/src/sensor_fusion.cpp.o -c /home/nolan/Documents/drone_c/src/sensor_fusion.cpp",
+  "file": "/home/nolan/Documents/drone_c/src/sensor_fusion.cpp"
+},
+{
+  "directory": "/home/nolan/Documents/drone_c/build",
+  "command": "/usr/bin/g++  -I/home/nolan/Documents/drone_c/include -I/home/nolan/Documents/drone_c/deps -isystem /usr/include/opencv4 -isystem /usr/local/include/ncnn -g -fopenmp -o CMakeFiles/drone_competition.dir/src/main.cpp.o -c /home/nolan/Documents/drone_c/src/main.cpp",
+  "file": "/home/nolan/Documents/drone_c/src/main.cpp"
+}
+]
