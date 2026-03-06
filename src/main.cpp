@@ -9,6 +9,7 @@
 #include <opencv2/core.hpp>
 #include <opencv2/videoio.hpp>
 #include <opencv2/imgproc.hpp>
+#include <opencv2/highgui.hpp>
 
 extern "C" {
 #include "pid.h"
@@ -20,8 +21,8 @@ extern "C" {
 #include "mission.h"
 #include "flight_controller.h"
 #include "ball_dropper.h"
-#include "sensor_fusion.h"
 }
+#include "sensor_fusion.h"
 
 static volatile bool g_running = true;
 static void sighand(int s) { g_running = false; printf("\n[MAIN] Ctrl+C -> stopping\n"); }
@@ -62,6 +63,7 @@ struct Config {
     bool use_ai=true;  /* true=NCNN YOLO, false=HSV color */
     bool use_fusion=true; /* true=EKF fusion, false=UWB only */
     int  flow_detect_interval=5; /* re-detect features every N frames */
+    char video_path[256]="";  /* empty = use camera */
 };
 
 int main(int argc, char **argv) {
@@ -79,18 +81,33 @@ int main(int argc, char **argv) {
         else if(strcmp(argv[i],"--ai")==0) cfg.use_ai=true;
         else if(strcmp(argv[i],"--fusion")==0) cfg.use_fusion=true;
         else if(strcmp(argv[i],"--no-fusion")==0) cfg.use_fusion=false;
+        else if(strcmp(argv[i],"--cam")==0 && i+1<argc) cfg.cam_idx=atoi(argv[++i]);
+        else if(strcmp(argv[i],"--video")==0 && i+1<argc){
+            strncpy(cfg.video_path, argv[++i], sizeof(cfg.video_path)-1);
+        }
     }
     printf("[MAIN] Detection: %s\n", cfg.use_ai ? "AI (NCNN YOLO)" : "HSV Color");
 
-    /* === Camera === */
-    cv::VideoCapture cap(cfg.cam_idx, cv::CAP_V4L2);
-    cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M','J','P','G'));
-    cap.set(cv::CAP_PROP_FRAME_WIDTH, cfg.cam_w);
-    cap.set(cv::CAP_PROP_FRAME_HEIGHT, cfg.cam_h);
-    cap.set(cv::CAP_PROP_FPS, cfg.cam_fps);
-    cap.set(cv::CAP_PROP_BUFFERSIZE, 1);
-    if(!cap.isOpened()){printf("[CAM]Failed open %d\n",cfg.cam_idx);return 1;}
-    printf("[CAM]Opened %dx%d@%d\n",cfg.cam_w,cfg.cam_h,cfg.cam_fps);
+    /* === Camera / Video === */
+    bool use_video_file = (cfg.video_path[0] != '\0');
+    cv::VideoCapture cap;
+    if(use_video_file){
+        cap.open(cfg.video_path);
+        if(!cap.isOpened()){printf("[CAM]Failed open video: %s\n",cfg.video_path);return 1;}
+        cfg.cam_w = (int)cap.get(cv::CAP_PROP_FRAME_WIDTH);
+        cfg.cam_h = (int)cap.get(cv::CAP_PROP_FRAME_HEIGHT);
+        cfg.cam_fps = (int)cap.get(cv::CAP_PROP_FPS);
+        printf("[VIDEO]Opened %s  %dx%d@%d\n",cfg.video_path,cfg.cam_w,cfg.cam_h,cfg.cam_fps);
+    } else {
+        cap.open(cfg.cam_idx, cv::CAP_V4L2);
+        cap.set(cv::CAP_PROP_FOURCC, cv::VideoWriter::fourcc('M','J','P','G'));
+        cap.set(cv::CAP_PROP_FRAME_WIDTH, cfg.cam_w);
+        cap.set(cv::CAP_PROP_FRAME_HEIGHT, cfg.cam_h);
+        cap.set(cv::CAP_PROP_FPS, cfg.cam_fps);
+        cap.set(cv::CAP_PROP_BUFFERSIZE, 1);
+        if(!cap.isOpened()){printf("[CAM]Failed open %d\n",cfg.cam_idx);return 1;}
+        printf("[CAM]Opened %dx%d@%d\n",cfg.cam_w,cfg.cam_h,cfg.cam_fps);
+    }
 
     /* === Test modes === */
     if(test_cam){
@@ -101,17 +118,35 @@ int main(int argc, char **argv) {
     }
     if(test_hsv){
         printf("[TEST]HSV detection mode (port of process.py)\n");
+        if(use_video_file) printf("[TEST]Video: %s\n", cfg.video_path);
+        printf("[TEST]Press 'q' to quit, SPACE to pause\n");
         HSVConfig hcfg; hsv_config_default(&hcfg);
-        cv::Mat f;
+        cv::Mat f, draw;
+        bool paused = false;
         while(g_running){
-            cap.read(f);if(f.empty())continue;
-            Det dets[MAX_DET];
-            int n=hsv_detect(&hcfg, f.data, f.cols, f.rows, dets, MAX_DET, f.data);
-            printf("HSV: %d detections\n",n);
-            for(int i=0;i<n;i++)
-                printf("  [%s] cx=%d cy=%d area=%.3f\n",dets[i].name,dets[i].cx,dets[i].cy,dets[i].rel_area);
-            usleep(33000);
+            if(!paused){
+                cap.read(f);
+                if(f.empty()){
+                    if(use_video_file){
+                        printf("[TEST]End of video, restarting...\n");
+                        cap.set(cv::CAP_PROP_POS_FRAMES, 0);
+                        continue;
+                    }
+                    continue;
+                }
+                draw = f.clone();
+                Det dets[MAX_DET];
+                int n=hsv_detect(&hcfg, f.data, f.cols, f.rows, dets, MAX_DET, draw.data);
+                printf("HSV: %d detections\n",n);
+                for(int i=0;i<n;i++)
+                    printf("  [%s] cx=%d cy=%d area=%.3f\n",dets[i].name,dets[i].cx,dets[i].cy,dets[i].rel_area);
+                cv::imshow("HSV Detection", draw);
+            }
+            int key = cv::waitKey(use_video_file ? 30 : 1) & 0xFF;
+            if(key == 'q' || key == 27) break;
+            if(key == ' ') paused = !paused;
         }
+        cv::destroyAllWindows();
         return 0;
     }
     if(test_uwb){
@@ -196,7 +231,7 @@ int main(int argc, char **argv) {
     int frame_cnt = 0;
 
     while(g_running){
-        double t0 = ms();
+        double t0 = mono_s();
         cap.read(frame);
         if(frame.empty()) continue;
         frame_cnt++;
@@ -271,7 +306,7 @@ int main(int argc, char **argv) {
 
         /* Status print every 30 frames */
         if(frame_cnt % 30 == 0){
-            double fps = 1.0 / fmax(ms()-t0, 1e-6);
+            double fps = 1.0 / fmax(mono_s()-t0, 1e-6);
             printf("\n--- Frame %d ---\n", frame_cnt);
             printf("  FPS:%.0f Det:%d State:%d WP:%d\n", fps, ndet, mission.state, mission.wp_idx);
             printf("  Pos:(%.0f,%.0f) Q:%d Alt:%.2f\n", pos_xy[0], pos_xy[1], uwb_q, alt);

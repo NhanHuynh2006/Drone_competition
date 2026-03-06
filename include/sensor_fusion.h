@@ -13,6 +13,10 @@
 #ifndef SENSOR_FUSION_H
 #define SENSOR_FUSION_H
 
+#ifdef __cplusplus
+extern "C" {
+#endif
+
 #include <stdbool.h>
 #include <stdint.h>
 #include <pthread.h>
@@ -62,6 +66,7 @@ typedef struct {
     int    uwb_updates;
     int    flow_updates;
     int    imu_updates;
+    int    range_count;
     double last_update;
 } FusedState;
 
@@ -139,5 +144,9 @@ void oft_init(OptFlowTracker *t, int w, int h, int detect_interval);
 OptFlowData oft_process(OptFlowTracker *t, const unsigned char *bgr, int w, int h, float altitude);
 void oft_reset(OptFlowTracker *t);
 void oft_destroy(OptFlowTracker *t);
+
+#ifdef __cplusplus
+}
+#endif
 
 #endif

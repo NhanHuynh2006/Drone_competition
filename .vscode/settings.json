@@ -1,0 +1,6 @@
+{
+    "C_Cpp.files.exclude": {
+        "${workspaceFolder}/deps/**": true,
+        "${workspaceFolder}/build/**": true
+    }
+}

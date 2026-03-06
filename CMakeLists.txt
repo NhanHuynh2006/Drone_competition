@@ -22,8 +22,9 @@ if(NOT ncnn_FOUND)
                           INTERFACE_INCLUDE_DIRECTORIES ${NCNN_INC})
 endif()
 
-set(MAVLINK_DIR "${CMAKE_SOURCE_DIR}/deps/c_library_v2")
+set(MAVLINK_DIR "${CMAKE_SOURCE_DIR}/deps")
 find_package(Threads REQUIRED)
+find_package(OpenMP QUIET)
 
 # Include paths
 include_directories(include ${MAVLINK_DIR} ${OpenCV_INCLUDE_DIRS})
@@ -34,10 +35,11 @@ set(C_SRCS src/pid.c src/kalman2d.c src/dwm1001.c src/ball_dropper.c
 set(CXX_SRCS src/detector.cpp src/hsv_detector.cpp src/sensor_fusion.cpp src/main.cpp)
 
 add_executable(${PROJECT_NAME} ${C_SRCS} ${CXX_SRCS})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ncnn Threads::Threads m)
+target_link_libraries(${PROJECT_NAME} PRIVATE ${OpenCV_LIBS} ncnn Threads::Threads m
+    $<$<BOOL:${OpenMP_CXX_FOUND}>:OpenMP::OpenMP_CXX> gomp)
 
-# HSV-only test (no NCNN needed)
-add_executable(test_hsv src/hsv_detector.cpp)
-target_compile_definitions(test_hsv PRIVATE HSV_STANDALONE)
-target_include_directories(test_hsv PRIVATE include ${OpenCV_INCLUDE_DIRS})
-target_link_libraries(test_hsv PRIVATE ${OpenCV_LIBS})
+# HSV-only test (no NCNN needed) - disabled: hsv_detector.cpp has no standalone main
+# add_executable(test_hsv src/hsv_detector.cpp)
+# target_compile_definitions(test_hsv PRIVATE HSV_STANDALONE)
+# target_include_directories(test_hsv PRIVATE include ${OpenCV_INCLUDE_DIRS})
+# target_link_libraries(test_hsv PRIVATE ${OpenCV_LIBS})

@@ -317,6 +317,7 @@ void sf_get_state(SensorFusion *sf, FusedState *out) {
     out->uwb_updates = sf->uwb_count;
     out->flow_updates = sf->flow_count;
     out->imu_updates = sf->imu_count;
+    out->range_count = sf->range_count;
     out->last_update = sf->last_predict_time;
     pthread_mutex_unlock(&sf->mtx);
 }

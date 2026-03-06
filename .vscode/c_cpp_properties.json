@@ -1,0 +1,25 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/include",
+                "${workspaceFolder}/deps",
+                "${workspaceFolder}/deps/c_library_v2",
+                "/usr/include/opencv4",
+                "/usr/local/include/ncnn"
+            ],
+            "defines": [],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "c17",
+            "cppStandard": "gnu++17",
+            "intelliSenseMode": "linux-gcc-x64",
+            "compileCommands": "${workspaceFolder}/compile_commands.json",
+            "forcedInclude": [
+                "/usr/lib/gcc/x86_64-linux-gnu/11/include/stdint.h",
+                "${workspaceFolder}/deps/c_library_v2/mavlink_types.h"
+            ]
+        }
+    ],
+    "version": 4
+}
